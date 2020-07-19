@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:icon="@drawable/ic_home_selector"
+          android:id="@+id/nav_item_home"
           android:title="Home" />
     <item android:icon="@drawable/ic_search_selector"
+          android:id="@+id/nav_item_search"
           android:title="Search" />
     <item android:icon="@drawable/ic_share_selector"
+          android:id="@+id/nav_item_share"
           android:title="Share" />
     <item android:icon="@drawable/ic_likes_selector"
+          android:id="@+id/nav_item_likes"
           android:title="Likes" />
     <item android:icon="@drawable/ic_profile_selector"
+          android:id="@+id/nav_item_profile"
           android:title="Profile" />
 </menu>
