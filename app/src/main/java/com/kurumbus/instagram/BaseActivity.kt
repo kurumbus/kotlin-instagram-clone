@@ -4,7 +4,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.LabelVisibilityMode
-import kotlinx.android.synthetic.main.activity_profile.*
+import kotlinx.android.synthetic.main.bottom_navigation_view.*
 
 abstract class BaseActivity (val navNumber: Int) : AppCompatActivity(){
 

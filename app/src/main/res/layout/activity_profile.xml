@@ -8,31 +8,23 @@
         android:background="@color/white"
 >
     
-    <androidx.appcompat.widget.Toolbar android:layout_width="match_parent"
-                                       android:layout_height="50dp"
+    <androidx.appcompat.widget.Toolbar style="@style/toolbar"
                                        app:layout_constraintStart_toStartOf="parent"
                                        app:layout_constraintTop_toTopOf="parent"
-                                       android:background="@color/whiteish"
-                                       android:elevation="4dp"
                                        android:id="@+id/toolbar"
     >
         <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
                                                            android:layout_height="wrap_content">
-            <TextView android:layout_width="wrap_content"
-                      android:layout_height="match_parent"
-                      android:textSize="19sp"
-                      app:layout_constraintLeft_toLeftOf="parent"
+            <TextView style="@style/toolbar_title"
+                      app:layout_constraintStart_toStartOf="parent"
                       app:layout_constraintTop_toTopOf="parent"
                       app:layout_constraintBottom_toBottomOf="parent"
                       android:text="Kurumbus"
-                      android:textColor="@color/black"
             />
             
-            <ImageView android:layout_width="50dp"
-                       android:layout_height="50dp"
-                       android:padding="10dp"
+            <ImageView style="@style/toolbar_image"
                        app:layout_constraintTop_toTopOf="parent"
-                       app:layout_constraintRight_toRightOf="parent"
+                       app:layout_constraintEnd_toEndOf="parent"
                        android:src="@drawable/ic_more"
             />
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -120,14 +112,6 @@
             app:layout_constraintHorizontal_weight="5"
     />
 
-    <com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx android:layout_width="match_parent"
-                                                                android:id="@+id/bottom_navigation_view"
-                                                                android:layout_height="50dp"
-                                                                android:background="@color/whiteish"
-                                                                android:elevation="4dp"
-                                                                app:layout_constraintBottom_toBottomOf="parent"
-                                                                app:menu="@menu/bottom_navigation_menu"
-    >
+    <include layout="@layout/bottom_navigation_view" />
 
-    </com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx>
 </androidx.constraintlayout.widget.ConstraintLayout>
