@@ -1,44 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:background="@color/white"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".EditProfileActivity">
-    <androidx.appcompat.widget.Toolbar style="@style/toolbar"
-                                       app:layout_constraintStart_toStartOf="parent"
-                                       app:layout_constraintTop_toTopOf="parent"
-                                       android:background="@color/whiteish"
-                                       app:contentInsetStart="0dp"
-                                       android:id="@+id/toolbar"
-    >
-        <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
-                                                           android:layout_height="wrap_content">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".EditProfileActivity">
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context=".EditProfileActivity">
+        <androidx.appcompat.widget.Toolbar style="@style/toolbar"
+                                           app:layout_constraintStart_toStartOf="parent"
+                                           app:layout_constraintTop_toTopOf="parent"
+                                           android:background="@color/whiteish"
+                                           app:contentInsetStart="0dp"
+                                           android:id="@+id/toolbar"
+        >
+            <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                               android:layout_height="wrap_content">
 
-            <ImageView style="@style/toolbar_image"
-                       android:id="@+id/close_image"
-                       app:layout_constraintTop_toTopOf="parent"
-                       app:layout_constraintStart_toStartOf="parent"
-                       android:src="@drawable/ic_close"
-            />
+                <ImageView style="@style/toolbar_image"
+                           android:id="@+id/close_image"
+                           app:layout_constraintTop_toTopOf="parent"
+                           app:layout_constraintStart_toStartOf="parent"
+                           android:src="@drawable/ic_close"
+                />
 
-            <TextView style="@style/toolbar_title"
-                      app:layout_constraintStart_toEndOf="@id/close_image"
-                      app:layout_constraintTop_toTopOf="parent"
-                      app:layout_constraintBottom_toBottomOf="parent"
-                      android:text="Edit Profile"
-            />
+                <TextView style="@style/toolbar_title"
+                          app:layout_constraintStart_toEndOf="@id/close_image"
+                          app:layout_constraintTop_toTopOf="parent"
+                          app:layout_constraintBottom_toBottomOf="parent"
+                          android:text="Edit Profile"
+                />
 
-            <ImageView style="@style/toolbar_image"
-                       android:id="@+id/save_image"
-                       app:layout_constraintTop_toTopOf="parent"
-                       app:layout_constraintEnd_toEndOf="parent"
-                       android:src="@drawable/ic_check"
-            />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView style="@style/toolbar_image"
+                           android:id="@+id/save_image"
+                           app:layout_constraintTop_toTopOf="parent"
+                           app:layout_constraintEnd_toEndOf="parent"
+                           android:src="@drawable/ic_check"
+                />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.appcompat.widget.Toolbar>
+        </androidx.appcompat.widget.Toolbar>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <de.hdodenhof.circleimageview.CircleImageView android:layout_width="100dp"
+                                                      android:layout_height="100dp"
+                                                      android:id="@+id/profile_image"
+                                                      app:layout_constraintTop_toBottomOf="@id/toolbar"
+                                                      app:layout_constraintStart_toStartOf="parent"
+                                                      app:layout_constraintEnd_toEndOf="parent"
+                                                      android:src="@drawable/android_picture"
+                                                      android:layout_marginTop="15dp"
+                                                      app:civ_border_width="1dp"
+                                                      app:civ_border_color="@color/grey"
+
+        />
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="Name"
+                  android:id="@+id/name_label"
+                  app:layout_constraintTop_toBottomOf="@id/profile_image"
+                  android:layout_marginStart="23dp"
+                  android:labelFor="@id/name_input"
+                  android:textColor="@color/grey"
+        />
+        <EditText android:layout_marginTop="20dp"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/name_input"
+                  app:layout_constraintTop_toBottomOf="@id/name_label"
+                  android:layout_marginStart="20dp"
+                  android:layout_marginEnd="20dp"
+                  android:inputType="text"/>
+
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="Username"
+                  android:id="@+id/username_label"
+                  app:layout_constraintTop_toBottomOf="@id/name_input"
+                  android:layout_marginStart="23dp"
+                  android:labelFor="@id/username_input"
+                  android:textColor="@color/grey"
+        />
+        <EditText android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/username_input"
+                  app:layout_constraintTop_toBottomOf="@id/username_label"
+                  android:layout_marginStart="20dp"
+                  android:layout_marginEnd="20dp"
+                  android:inputType="text"/>
+
+        <TextView android:layout_marginTop="20dp"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="Website"
+                  android:id="@+id/website_label"
+                  app:layout_constraintTop_toBottomOf="@id/username_input"
+                  android:layout_marginStart="23dp"
+                  android:labelFor="@id/website_input"
+                  android:textColor="@color/grey"
+        />
+        <EditText android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/website_input"
+                  app:layout_constraintTop_toBottomOf="@id/website_label"
+                  android:layout_marginStart="20dp"
+                  android:layout_marginEnd="20dp"
+                  android:inputType="text"
+        />
+
+        <TextView android:layout_marginTop="20dp"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="Website"
+                  android:id="@+id/bio_label"
+                  app:layout_constraintTop_toBottomOf="@id/username_input"
+                  android:layout_marginStart="23dp"
+                  android:labelFor="@id/bio_input"
+                  android:textColor="@color/grey"
+        />
+        <EditText android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/bio_input"
+                  app:layout_constraintTop_toBottomOf="@id/bio_label"
+                  android:layout_marginStart="20dp"
+                  android:layout_marginEnd="20dp"
+                  android:inputType="text"
+        />
+
+        <TextView android:layout_marginTop="30dp"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="Private Information"
+                  android:id="@+id/private_info_text"
+                  app:layout_constraintTop_toBottomOf="@id/bio_input"
+                  android:layout_marginStart="23dp"
+                  android:textColor="@color/black"
+        />
+
+        <TextView android:layout_marginTop="20dp"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="Email"
+                  android:id="@+id/email_label"
+                  app:layout_constraintTop_toBottomOf="@id/private_info_text"
+                  android:layout_marginStart="23dp"
+                  android:labelFor="@id/bio_input"
+                  android:textColor="@color/grey"
+        />
+        <EditText android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/email_input"
+                  app:layout_constraintTop_toBottomOf="@id/email_label"
+                  android:layout_marginStart="20dp"
+                  android:layout_marginEnd="20dp"
+                  android:inputType="textEmailAddress"
+        />
+
+        <TextView android:layout_marginTop="20dp"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="Phone"
+                  android:id="@+id/phone_label"
+                  app:layout_constraintTop_toBottomOf="@id/email_input"
+                  android:layout_marginStart="23dp"
+                  android:labelFor="@id/phone_input"
+                  android:textColor="@color/grey"
+        />
+        <EditText android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/phone_input"
+                  app:layout_constraintTop_toBottomOf="@id/phone_label"
+                  android:layout_marginStart="20dp"
+                  android:layout_marginEnd="20dp"
+                  android:inputType="phone"
+        />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
