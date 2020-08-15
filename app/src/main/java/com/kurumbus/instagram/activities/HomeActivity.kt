@@ -1,10 +1,10 @@
-package com.kurumbus.instagram
+package com.kurumbus.instagram.activities
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import com.google.firebase.auth.FirebaseAuth
+import com.kurumbus.instagram.R
 import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : BaseActivity(0) {

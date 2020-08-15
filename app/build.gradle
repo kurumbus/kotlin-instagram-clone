@@ -39,5 +39,5 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.google.firebase:firebase-auth:19.3.2'
     implementation 'com.google.firebase:firebase-database:19.3.1'
-    implementation  'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.1.0'
+    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.1.0'
 }

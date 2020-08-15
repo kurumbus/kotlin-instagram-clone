@@ -1,9 +1,10 @@
-package com.kurumbus.instagram
+package com.kurumbus.instagram.activities
 
 import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.LabelVisibilityMode
+import com.kurumbus.instagram.R
 import kotlinx.android.synthetic.main.bottom_navigation_view.*
 
 abstract class BaseActivity (val navNumber: Int) : AppCompatActivity(){

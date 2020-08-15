@@ -4,12 +4,12 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".EditProfileActivity">
+            tools:context=".activities.EditProfileActivity">
     <androidx.constraintlayout.widget.ConstraintLayout
             android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context=".EditProfileActivity">
+            tools:context=".activities.EditProfileActivity">
         <androidx.appcompat.widget.Toolbar style="@style/toolbar"
                                            app:layout_constraintStart_toStartOf="parent"
                                            app:layout_constraintTop_toTopOf="parent"

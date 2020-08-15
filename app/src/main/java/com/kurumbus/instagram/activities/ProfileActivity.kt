@@ -1,8 +1,9 @@
-package com.kurumbus.instagram
+package com.kurumbus.instagram.activities
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import com.kurumbus.instagram.R
 import kotlinx.android.synthetic.main.activity_profile.*
 
 class ProfileActivity : BaseActivity(4) {

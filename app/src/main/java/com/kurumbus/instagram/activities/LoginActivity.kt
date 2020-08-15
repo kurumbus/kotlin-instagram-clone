@@ -1,4 +1,4 @@
-package com.kurumbus.instagram
+package com.kurumbus.instagram.activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -8,8 +8,8 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
 import com.google.firebase.auth.FirebaseAuth
+import com.kurumbus.instagram.R
 import kotlinx.android.synthetic.main.activity_login.*
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
@@ -41,14 +41,14 @@ class LoginActivity : AppCompatActivity(), KeyboardVisibilityEventListener, Text
         if (validate(email, password)) {
             mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener{
                 if (it.isSuccessful) {
-                    startActivity(Intent(this,HomeActivity::class.java))
+                    startActivity(Intent(this, HomeActivity::class.java))
                     finish()
                 } else {
-                    Toast.makeText(this, "Incorrect credentials", Toast.LENGTH_SHORT).show()
+                    showToast("Incorrect credentials")
                 }
             }
         } else {
-            Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()
+            showToast("Please enter email and password")
         }
     }
 
