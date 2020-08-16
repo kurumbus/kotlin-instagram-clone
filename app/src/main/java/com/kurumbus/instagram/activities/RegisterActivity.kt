@@ -10,23 +10,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.kurumbus.instagram.R
 import com.kurumbus.instagram.models.User
-import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_register.*
 import kotlinx.android.synthetic.main.fragment_register_email.*
 import kotlinx.android.synthetic.main.fragment_register_email.email_input
 import kotlinx.android.synthetic.main.fragment_register_name_pass.*
 
 class RegisterActivity : AppCompatActivity(), EmailFragment.Listener, NamePassFragment.Listener {
     private val TAG = "RegisterActivity"
+
     private var mEmail: String? = null
     private var mFullName: String? = null
     private var mPassword: String? = null
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mDatabase: DatabaseReference
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
@@ -41,8 +42,22 @@ class RegisterActivity : AppCompatActivity(), EmailFragment.Listener, NamePassFr
     override fun onNext(email: String) {
         if (email.isNotEmpty()) {
             mEmail = email
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NamePassFragment())
-                                  .addToBackStack(null).commit()
+            mAuth.fetchSignInMethodsForEmail(email).addOnCompleteListener{
+                if (it.isSuccessful) {
+                    if (it.result?.signInMethods?.isEmpty() != false) {
+                        supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NamePassFragment())
+                            .addToBackStack(null).commit()
+                    } else {
+                        showToast("Email already registered")
+                    }
+                } else {
+                    Log.e(TAG, "Exception", it.exception)
+                    if (it.exception is FirebaseAuthInvalidCredentialsException) {
+                        showToast("Email is badly formatted")
+                    }
+                }
+            }
+
         } else {
             showToast("Email must not be empty")
         }
@@ -98,6 +113,8 @@ class EmailFragment: Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        coordinateButtonAndInputs(next_button, email_input)
+
         next_button.setOnClickListener{
             val email = email_input.text.toString()
             mListener.onNext(email)
@@ -123,6 +140,7 @@ class NamePassFragment: Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        coordinateButtonAndInputs(register_button, full_name_input, password_input_register)
         register_button.setOnClickListener{
             val fullName = full_name_input.text.toString()
             val password = password_input_register.text.toString()

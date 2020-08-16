@@ -15,7 +15,6 @@ class EditProfileActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.INFO)
 
         setContentView(R.layout.activity_edit_profile)
         Log.d(TAG, "onCreate")

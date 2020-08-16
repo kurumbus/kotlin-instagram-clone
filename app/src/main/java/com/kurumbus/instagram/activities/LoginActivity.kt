@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 
-class LoginActivity : AppCompatActivity(), KeyboardVisibilityEventListener, TextWatcher, View.OnClickListener {
+class LoginActivity : AppCompatActivity(), KeyboardVisibilityEventListener, View.OnClickListener {
 
 
     private val TAG = "LoginActivity"
@@ -25,10 +25,7 @@ class LoginActivity : AppCompatActivity(), KeyboardVisibilityEventListener, Text
         setContentView(R.layout.activity_login)
         Log.d(TAG, "onCreate")
         KeyboardVisibilityEvent.setEventListener(this, this)
-        login_button.isEnabled = false
-
-        email_input.addTextChangedListener(this)
-        password_input.addTextChangedListener(this)
+        coordinateButtonAndInputs(login_button, email_input, password_input)
         mAuth = FirebaseAuth.getInstance()
 
         login_button.setOnClickListener(this)
@@ -58,22 +55,10 @@ class LoginActivity : AppCompatActivity(), KeyboardVisibilityEventListener, Text
 
     override fun onVisibilityChanged(isKeyboardOpen: Boolean) {
         if (isKeyboardOpen) {
-            scroll_view.scrollTo(0, scroll_view.bottom)
             create_account_text.visibility = View.GONE
         } else {
-            scroll_view.scrollTo(0, scroll_view.top)
             create_account_text.visibility = View.VISIBLE
         }
-    }
-
-    override fun afterTextChanged(s: Editable?) {
-        login_button.isEnabled = validate(email_input.text.toString(), password_input.text.toString())
-    }
-
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-    }
-
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
     }
 
     private fun validate(email: String, password: String) = email.isNotEmpty() && password.isNotEmpty()
