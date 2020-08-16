@@ -1,7 +1,11 @@
 package com.kurumbus.instagram.activities
 
+import android.content.Intent
+import android.icu.text.SimpleDateFormat
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.TextView
 import com.google.firebase.auth.AuthCredential
@@ -9,14 +13,27 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.kurumbus.instagram.R
 import com.kurumbus.instagram.models.User
 import com.kurumbus.instagram.views.PasswordDialog
 import kotlinx.android.synthetic.main.activity_edit_profile.*
+import java.io.File
+import java.io.IOException
+import java.util.*
+import android.annotation.SuppressLint
+import android.net.Uri
+import androidx.core.content.FileProvider
+
 
 class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
+    private val TAKE_PICTURE_REQUEST_CODE = 1
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
     private lateinit var mPendingUser: User
     private lateinit var mDatabase: DatabaseReference
+    private lateinit var mStorage: StorageReference
+    private lateinit var mImageUri: Uri
 
     private lateinit var mUser: User
     private lateinit var mAuth: FirebaseAuth
@@ -38,6 +55,9 @@ class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
         mAuth = FirebaseAuth.getInstance()
         val uid = mAuth.currentUser!!.uid.toString()
         mDatabase = FirebaseDatabase.getInstance().reference
+        mStorage = FirebaseStorage.getInstance().reference
+
+        change_photo_text.setOnClickListener{ takeCameraPicture() }
 
         mDatabase.child("users").child(uid).addListenerForSingleValueEvent(ValueEventListenerAdapter {
             Log.d(TAG, "snapshot" )
@@ -49,6 +69,54 @@ class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
             phone_input.setText(mUser.phone.toString(), TextView.BufferType.EDITABLE)
             username_input.setText(mUser.username, TextView.BufferType.EDITABLE)
         })
+    }
+
+    private fun takeCameraPicture() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (intent.resolveActivity(packageManager) != null ) {
+            val imageFile = createImageFile()
+            mImageUri  = FileProvider.getUriForFile(
+                this,
+                "com.kurumbus.instagram.fileprovider",
+                imageFile
+            )
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri)
+            startActivityForResult(intent, TAKE_PICTURE_REQUEST_CODE)
+        }
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode ==  TAKE_PICTURE_REQUEST_CODE && resultCode == RESULT_OK) {
+            val uid = mAuth.currentUser!!.uid
+            mStorage.child("users/$uid/photo").putFile(mImageUri).addOnCompleteListener{
+                if (it.isSuccessful) {
+                    mStorage.child("users/$uid/photo").downloadUrl.addOnCompleteListener{
+                        mDatabase.child("users/$uid/photo").setValue(it.result.toString()).addOnCompleteListener{
+                            if (it.isSuccessful) {
+                                showToast("Photo Saved")
+                            } else {
+                                showToast(it.exception!!.message!!)
+                            }
+                        }
+                    }
+                } else {
+                    showToast(it.exception!!.message!!)
+                }
+            }
+        }
+    }
+
+    private fun createImageFile(): File {
+        // Create an image file name
+
+        val imageFileName = "JPEG_" + timeStamp + "_"
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            imageFileName,
+            ".jpg",
+            storageDir
+        )
     }
 
     private fun updateProfile() {
