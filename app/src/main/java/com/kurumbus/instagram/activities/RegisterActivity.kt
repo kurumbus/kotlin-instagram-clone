@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.database.DatabaseReference
@@ -42,24 +43,30 @@ class RegisterActivity : AppCompatActivity(), EmailFragment.Listener, NamePassFr
     override fun onNext(email: String) {
         if (email.isNotEmpty()) {
             mEmail = email
-            mAuth.fetchSignInMethodsForEmail(email).addOnCompleteListener{
-                if (it.isSuccessful) {
-                    if (it.result?.signInMethods?.isEmpty() != false) {
-                        supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NamePassFragment())
-                            .addToBackStack(null).commit()
-                    } else {
-                        showToast("Email already registered")
-                    }
+            mAuth.fetchSignInMethodsForEmail(email) {signInMethods ->
+                if (signInMethods.isEmpty()) {
+                    supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NamePassFragment())
+                        .addToBackStack(null).commit()
                 } else {
-                    Log.e(TAG, "Exception", it.exception)
-                    if (it.exception is FirebaseAuthInvalidCredentialsException) {
-                        showToast("Email is badly formatted")
-                    }
+                    showToast("Email already registered")
                 }
             }
-
         } else {
             showToast("Email must not be empty")
+        }
+    }
+
+    private fun FirebaseAuth.fetchSignInMethodsForEmail(email: String, onSuccess: (List<String>) -> Unit) {
+        fetchSignInMethodsForEmail(email).addOnCompleteListener{
+            if (it.isSuccessful) {
+                onSuccess(it.result?.signInMethods ?: emptyList<String>())
+
+            } else {
+                Log.e(TAG, "Exception", it.exception)
+                if (it.exception is FirebaseAuthInvalidCredentialsException) {
+                    showToast("Email is badly formatted")
+                }
+            }
         }
     }
 
@@ -67,20 +74,11 @@ class RegisterActivity : AppCompatActivity(), EmailFragment.Listener, NamePassFr
         if (fullName.isNotEmpty() && password.isNotEmpty() ) {
             mFullName = fullName
             mPassword = password
-            mAuth.createUserWithEmailAndPassword(mEmail!!, mPassword!!).addOnCompleteListener{
-                if (it.isSuccessful) {
-                    val user = makeUser(mFullName!!, mEmail!!)
-                    val reference = mDatabase.child("users").child(it.result!!.user!!.uid)
-                    reference.setValue(user).addOnCompleteListener{
-                        if (it.isSuccessful) {
-                            startHomeActivity()
-                        } else {
-                            Log.e(TAG, "Failed to create a profile", it.exception)
-                            showToast("Something wrong hapenned")
-                        }
-                    }
-                } else {
-                    Log.e(TAG, "Failed to create user", it.exception)
+
+            mAuth.createUserWithEmailAndPassword(mEmail!!, mPassword!!) {
+                val user = makeUser(mFullName!!, mEmail!!)
+                mDatabase.createUser(it.user!!.uid, user) {
+                    startHomeActivity()
                 }
             }
         } else {
@@ -98,6 +96,28 @@ class RegisterActivity : AppCompatActivity(), EmailFragment.Listener, NamePassFr
     private fun startHomeActivity() {
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
+    }
+
+    private fun FirebaseAuth.createUserWithEmailAndPassword(email: String, password: String, onSuccess: (AuthResult) -> Unit) {
+        createUserWithEmailAndPassword(email, password).addOnCompleteListener{
+            if (it.isSuccessful) {
+                onSuccess(it.result!!)
+            } else {
+                Log.e(TAG, "Failed to create user", it.exception)
+            }
+        }
+    }
+
+    private fun DatabaseReference.createUser(uid: String, user: User, onSuccess: () -> Unit) {
+        val reference = mDatabase.child("users").child(uid)
+        reference.setValue(user).addOnCompleteListener{
+            if (it.isSuccessful) {
+                onSuccess()
+            } else {
+                Log.e(TAG, "Failed to create a profile", it.exception)
+                showToast("Something wrong hapenned")
+            }
+        }
     }
 }
 
