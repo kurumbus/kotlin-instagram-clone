@@ -32,6 +32,10 @@ class LoginActivity : AppCompatActivity(), KeyboardVisibilityEventListener, Text
         mAuth = FirebaseAuth.getInstance()
 
         login_button.setOnClickListener(this)
+
+        create_account_text.setOnClickListener{
+            startActivity(Intent(this, RegisterActivity::class.java))
+        }
     }
 
     override fun onClick(v: View) {
