@@ -24,7 +24,10 @@ import java.io.IOException
 import java.util.*
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.text.Editable
+import android.widget.ImageView
 import androidx.core.content.FileProvider
+import com.bumptech.glide.Glide
 
 
 class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
@@ -66,10 +69,12 @@ class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
             website_input.setText(mUser.website, TextView.BufferType.EDITABLE)
             bio_input.setText(mUser.bio, TextView.BufferType.EDITABLE)
             email_input.setText(mUser.email, TextView.BufferType.EDITABLE)
-            phone_input.setText(mUser.phone.toString(), TextView.BufferType.EDITABLE)
+            phone_input.setText(mUser.phone?.toString(), TextView.BufferType.EDITABLE)
             username_input.setText(mUser.username, TextView.BufferType.EDITABLE)
+            profile_image.loadUserPhoto(mUser.photo)
         })
     }
+
 
     private fun takeCameraPicture() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -92,8 +97,11 @@ class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
             mStorage.child("users/$uid/photo").putFile(mImageUri).addOnCompleteListener{
                 if (it.isSuccessful) {
                     mStorage.child("users/$uid/photo").downloadUrl.addOnCompleteListener{
-                        mDatabase.child("users/$uid/photo").setValue(it.result.toString()).addOnCompleteListener{
+                        val photoUrl = it.result.toString()
+                        mDatabase.child("users/$uid/photo").setValue(photoUrl).addOnCompleteListener{
                             if (it.isSuccessful) {
+                                mUser = mUser.copy(photo = photoUrl)
+                                profile_image.loadUserPhoto(mUser.photo)
                                 showToast("Photo Saved")
                             } else {
                                 showToast(it.exception!!.message!!)
@@ -134,20 +142,19 @@ class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
     }
 
     private fun readInputs(): User {
-        val phoneStr = phone_input.text.toString()
         return return User(
-            name = name_input.text.toString(),
-            username = username_input.text.toString(),
-            website = website_input.text.toString(),
-            bio = bio_input.text.toString(),
             email = email_input.text.toString(),
-            phone = if (phoneStr.isNotEmpty()) phoneStr.toLong() else 0
+            username = username_input.text.toString(),
+            name = name_input.text.toStringOrNull(),
+            website = website_input.text.toStringOrNull(),
+            bio = bio_input.text.toStringOrNull(),
+            phone = phone_input.text.toString().toLongOrNull()
         )
     }
 
     private fun validate(user: User): String? =
         when {
-            user.name.isEmpty() -> "Please enter name"
+            user.name!!.isEmpty() -> "Please enter name"
             user.username.isEmpty() -> "Please enter username"
             user.email.isEmpty() -> "Please enter email"
             else -> null
@@ -167,7 +174,7 @@ class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
     }
 
     private fun updateUser(user: User) {
-        val updatesMap =  mutableMapOf<String, Any>()
+        val updatesMap =  mutableMapOf<String, Any? >()
         if (user.name != mUser.name) updatesMap["name"] = user.name
         if (user.username != mUser.username) updatesMap["username"] = user.username
         if (user.website != mUser.website) updatesMap["website"] = user.website
@@ -201,7 +208,7 @@ class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
         }
     }
 
-    private fun DatabaseReference.updateUser(uid: String, updates: Map<String, Any>, onSuccess: () -> Unit) {
+    private fun DatabaseReference.updateUser(uid: String, updates: Map<String, Any?>, onSuccess: () -> Unit) {
         child("users").child(uid).updateChildren(updates)
             .addOnCompleteListener{
                 if (it.isSuccessful) {
