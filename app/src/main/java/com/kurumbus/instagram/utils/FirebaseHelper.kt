@@ -12,11 +12,9 @@ import com.kurumbus.instagram.activities.showToast
 
 class FirebaseHelper(private val activity: Activity) {
 
-    private val  mAuth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val  mDatabase: DatabaseReference = FirebaseDatabase.getInstance()
-        .reference
-    private val  mStorage: StorageReference = FirebaseStorage.getInstance()
-        .reference
+    val  mAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    val  mDatabase: DatabaseReference = FirebaseDatabase.getInstance().reference
+    val  mStorage: StorageReference = FirebaseStorage.getInstance().reference
 
     fun uploadUserPhoto(photoUri: Uri, onSuccess: (String) -> Unit ) {
         mStorage.child("users/${mAuth.currentUser!!.uid}/photo").putFile(photoUri ).addOnCompleteListener{
