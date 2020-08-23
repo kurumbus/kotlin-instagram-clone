@@ -1,45 +1,26 @@
 package com.kurumbus.instagram.activities
 
 import android.content.Intent
-import android.icu.text.SimpleDateFormat
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.TextView
-import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.*
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import com.kurumbus.instagram.R
 import com.kurumbus.instagram.models.User
 import com.kurumbus.instagram.views.PasswordDialog
 import kotlinx.android.synthetic.main.activity_edit_profile.*
-import java.io.File
-import java.io.IOException
-import java.util.*
 import android.annotation.SuppressLint
-import android.net.Uri
-import android.text.Editable
-import android.widget.ImageView
-import androidx.core.content.FileProvider
-import com.bumptech.glide.Glide
-
+import com.kurumbus.instagram.utils.CameraPictureTaker
+import com.kurumbus.instagram.utils.FirebaseHelper
+import com.kurumbus.instagram.utils.ValueEventListenerAdapter
 
 class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
-    private val TAKE_PICTURE_REQUEST_CODE = 1
-    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
     private lateinit var mPendingUser: User
-    private lateinit var mDatabase: DatabaseReference
-    private lateinit var mStorage: StorageReference
-    private lateinit var mImageUri: Uri
-
+    private lateinit var cameraPictureTaker: CameraPictureTaker
+    private lateinit var mFireBaseHelper: FirebaseHelper
     private lateinit var mUser: User
-    private lateinit var mAuth: FirebaseAuth
+
     private val TAG = "EditProfileActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +28,7 @@ class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
         setContentView(R.layout.activity_edit_profile)
         Log.d(TAG, "onCreate")
 
+        cameraPictureTaker = CameraPictureTaker(this)
         close_image.setOnClickListener{
             finish()
         }
@@ -55,77 +37,36 @@ class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
             updateProfile()
         }
 
-        mAuth = FirebaseAuth.getInstance()
-        val uid = mAuth.currentUser!!.uid.toString()
-        mDatabase = FirebaseDatabase.getInstance().reference
-        mStorage = FirebaseStorage.getInstance().reference
+        mFireBaseHelper = FirebaseHelper(this)
 
-        change_photo_text.setOnClickListener{ takeCameraPicture() }
+        change_photo_text.setOnClickListener{ cameraPictureTaker.takeCameraPicture() }
 
-        mDatabase.child("users").child(uid).addListenerForSingleValueEvent(ValueEventListenerAdapter {
-            Log.d(TAG, "snapshot" )
-            mUser = it.getValue(User::class.java)!!
-            name_input.setText(mUser.name, TextView.BufferType.EDITABLE)
-            website_input.setText(mUser.website, TextView.BufferType.EDITABLE)
-            bio_input.setText(mUser.bio, TextView.BufferType.EDITABLE)
-            email_input.setText(mUser.email, TextView.BufferType.EDITABLE)
-            phone_input.setText(mUser.phone?.toString(), TextView.BufferType.EDITABLE)
-            username_input.setText(mUser.username, TextView.BufferType.EDITABLE)
-            profile_image.loadUserPhoto(mUser.photo)
-        })
+        mFireBaseHelper.currentUserReference()
+            .addListenerForSingleValueEvent(ValueEventListenerAdapter {
+                Log.d(TAG, "snapshot")
+                mUser = it.getValue(User::class.java)!!
+                name_input.setText(mUser.name)
+                website_input.setText(mUser.website)
+                bio_input.setText(mUser.bio)
+                email_input.setText(mUser.email)
+                phone_input.setText(mUser.phone?.toString())
+                username_input.setText(mUser.username)
+                profile_image.loadUserPhoto(mUser.photo)
+            })
     }
-
-
-    private fun takeCameraPicture() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (intent.resolveActivity(packageManager) != null ) {
-            val imageFile = createImageFile()
-            mImageUri  = FileProvider.getUriForFile(
-                this,
-                "com.kurumbus.instagram.fileprovider",
-                imageFile
-            )
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri)
-            startActivityForResult(intent, TAKE_PICTURE_REQUEST_CODE)
-        }
-    }
-
     @SuppressLint("MissingSuperCall")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode ==  TAKE_PICTURE_REQUEST_CODE && resultCode == RESULT_OK) {
-            val uid = mAuth.currentUser!!.uid
-            mStorage.child("users/$uid/photo").putFile(mImageUri).addOnCompleteListener{
-                if (it.isSuccessful) {
-                    mStorage.child("users/$uid/photo").downloadUrl.addOnCompleteListener{
-                        val photoUrl = it.result.toString()
-                        mDatabase.child("users/$uid/photo").setValue(photoUrl).addOnCompleteListener{
-                            if (it.isSuccessful) {
-                                mUser = mUser.copy(photo = photoUrl)
-                                profile_image.loadUserPhoto(mUser.photo)
-                                showToast("Photo Saved")
-                            } else {
-                                showToast(it.exception!!.message!!)
-                            }
-                        }
-                    }
-                } else {
-                    showToast(it.exception!!.message!!)
+        if (requestCode ==  cameraPictureTaker.REQUEST_CODE && resultCode == RESULT_OK) {
+            mFireBaseHelper.uploadUserPhoto(cameraPictureTaker.imageUri!!) { url ->
+                mFireBaseHelper.updateUserPhoto(url) {
+                    mUser = mUser.copy(photo = url)
+                    profile_image.loadUserPhoto(mUser.photo)
+                    showToast("Photo Saved")
                 }
             }
         }
     }
 
-    private fun createImageFile(): File {
-        // Create an image file name
-
-        val imageFileName = "JPEG_" + timeStamp + "_"
-        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(
-            imageFileName,
-            ".jpg",
-            storageDir
-        )
-    }
 
     private fun updateProfile() {
         mPendingUser = readInputs()
@@ -163,8 +104,8 @@ class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
     override fun onPasswordConfirm(password: String) {
         if (password.isNotEmpty()) {
             val credential = EmailAuthProvider.getCredential(mUser.email, password)
-            mAuth.currentUser!!.reauthenticate(credential) {
-                mAuth.currentUser!!.updateEmail(mPendingUser.email) {
+            mFireBaseHelper.reauthenticate(credential) {
+                mFireBaseHelper.updateEmail(mPendingUser.email) {
                     updateUser(mPendingUser)
                 }
             }
@@ -182,41 +123,10 @@ class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
         if (user.email != mUser.email) updatesMap["email"] = user.email
         if (user.phone != mUser.phone) updatesMap["phone"] = user.phone
 
-        mDatabase.updateUser(mAuth.currentUser!!.uid, updatesMap) {
+        mFireBaseHelper.updateUser(updatesMap) {
             showToast("Profile Saved")
             finish()
         }
-    }
-
-    private fun FirebaseUser.reauthenticate(credential: AuthCredential, onSuccess: () -> Unit) {
-        reauthenticate(credential).addOnCompleteListener{
-            if (it.isSuccessful) {
-                onSuccess()
-            } else {
-                showToast(it.exception!!.message!!)
-            }
-        }
-    }
-
-    private fun FirebaseUser.updateEmail(email: String, onSuccess: () -> Unit) {
-        updateEmail(mPendingUser.email).addOnCompleteListener{
-            if (it.isSuccessful) {
-                onSuccess()
-            } else {
-                showToast(it.exception!!.message!!)
-            }
-        }
-    }
-
-    private fun DatabaseReference.updateUser(uid: String, updates: Map<String, Any?>, onSuccess: () -> Unit) {
-        child("users").child(uid).updateChildren(updates)
-            .addOnCompleteListener{
-                if (it.isSuccessful) {
-                    onSuccess()
-                } else {
-                    showToast(it.exception!!.message!!)
-                }
-            }
     }
 
 

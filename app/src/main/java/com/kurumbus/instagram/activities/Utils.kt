@@ -4,29 +4,12 @@ import android.app.Activity
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.kurumbus.instagram.R
-import kotlinx.android.synthetic.main.fragment_register_email.view.*
-
-class ValueEventListenerAdapter(val handler: (DataSnapshot) -> Unit) : ValueEventListener {
-    private val TAG = "ValueEventListenerAd"
-
-    override fun onDataChange(snapshot: DataSnapshot) {
-        handler(snapshot)
-    }
-
-    override fun onCancelled(error: DatabaseError) {
-        Log.e(TAG, "onCancelled", error.toException())
-    }
-}
 
 fun Context.showToast(text: String = "", duration: Int = Toast.LENGTH_LONG) {
     Toast.makeText(this, text, duration).show()
