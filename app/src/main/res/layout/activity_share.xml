@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar style="@style/toolbar"
+                                       app:layout_constraintStart_toStartOf="parent"
+                                       app:layout_constraintTop_toTopOf="parent"
+                                       android:id="@+id/toolbar"
+                                       app:contentInsetStart="0dp"
+    >
+        <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                           android:layout_height="wrap_content">
+            <ImageView style="@style/toolbar_image"
+                       android:src="@drawable/ic_back"
+                       android:id="@+id/back_image"
+                       app:layout_constraintBottom_toBottomOf="parent"
+                       app:layout_constraintStart_toStartOf="parent"
+                       app:layout_constraintTop_toTopOf="parent"
+            />
+            <TextView style="@style/toolbar_title"
+                      android:id="@+id/toolbar_title"
+                      app:layout_constraintStart_toEndOf="@id/back_image"
+                      app:layout_constraintTop_toTopOf="parent"
+                      app:layout_constraintBottom_toBottomOf="parent"
+                      android:text="Share to"
+            />
+
+            <TextView style="@style/toolbar_text"
+                      android:id="@+id/share_text"
+                      app:layout_constraintBottom_toBottomOf="parent"
+                      app:layout_constraintTop_toTopOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      android:text="Share"
+            />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <ImageView android:layout_width="80dp"
+               android:layout_height="80dp"
+               android:id="@+id/post_image"
+               android:src="@drawable/person"
+               app:layout_constraintTop_toBottomOf="@id/toolbar"
+               app:layout_constraintStart_toStartOf="parent"
+               android:layout_margin="10dp"
+               app:layout_constraintEnd_toStartOf="@id/caption_input"
+    />
+    <EditText android:layout_width="0dp"
+              android:layout_height="0dp"
+              android:id="@+id/caption_input"
+              app:layout_constraintStart_toEndOf="@id/post_image"
+              android:hint="Enter a caption here..."
+              app:layout_constraintTop_toTopOf="@id/post_image"
+              app:layout_constraintBottom_toBottomOf="@id/post_image"
+              app:layout_constraintEnd_toEndOf="parent"
+              android:background="@android:color/transparent"
+    />
+</androidx.constraintlayout.widget.ConstraintLayout>

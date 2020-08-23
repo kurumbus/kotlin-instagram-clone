@@ -4,20 +4,19 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.TextView
 import com.google.firebase.auth.EmailAuthProvider
 import com.kurumbus.instagram.R
 import com.kurumbus.instagram.models.User
 import com.kurumbus.instagram.views.PasswordDialog
 import kotlinx.android.synthetic.main.activity_edit_profile.*
 import android.annotation.SuppressLint
-import com.kurumbus.instagram.utils.CameraPictureTaker
+import com.kurumbus.instagram.utils.CameraHelper
 import com.kurumbus.instagram.utils.FirebaseHelper
 import com.kurumbus.instagram.utils.ValueEventListenerAdapter
 
 class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
     private lateinit var mPendingUser: User
-    private lateinit var cameraPictureTaker: CameraPictureTaker
+    private lateinit var cameraHelper: CameraHelper
     private lateinit var mFireBaseHelper: FirebaseHelper
     private lateinit var mUser: User
 
@@ -28,7 +27,7 @@ class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
         setContentView(R.layout.activity_edit_profile)
         Log.d(TAG, "onCreate")
 
-        cameraPictureTaker = CameraPictureTaker(this)
+        cameraHelper = CameraHelper(this)
         close_image.setOnClickListener{
             finish()
         }
@@ -39,7 +38,7 @@ class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
 
         mFireBaseHelper = FirebaseHelper(this)
 
-        change_photo_text.setOnClickListener{ cameraPictureTaker.takeCameraPicture() }
+        change_photo_text.setOnClickListener{ cameraHelper.takeCameraPicture() }
 
         mFireBaseHelper.currentUserReference()
             .addListenerForSingleValueEvent(ValueEventListenerAdapter {
@@ -56,8 +55,8 @@ class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
     }
     @SuppressLint("MissingSuperCall")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode ==  cameraPictureTaker.REQUEST_CODE && resultCode == RESULT_OK) {
-            mFireBaseHelper.uploadUserPhoto(cameraPictureTaker.imageUri!!) { url ->
+        if (requestCode ==  cameraHelper.REQUEST_CODE && resultCode == RESULT_OK) {
+            mFireBaseHelper.uploadUserPhoto(cameraHelper.imageUri!!) { url ->
                 mFireBaseHelper.updateUserPhoto(url) {
                     mUser = mUser.copy(photo = url)
                     profile_image.loadUserPhoto(mUser.photo)

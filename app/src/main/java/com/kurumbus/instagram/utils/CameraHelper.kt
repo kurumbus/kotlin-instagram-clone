@@ -10,7 +10,7 @@ import androidx.core.content.FileProvider
 import java.io.File
 import java.util.*
 
-class CameraPictureTaker(private val activity: Activity)  {
+class CameraHelper(private val activity: Activity)  {
     var imageUri: Uri? = null
     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
     val REQUEST_CODE = 1
