@@ -82,7 +82,7 @@ class EditProfileActivity : AppCompatActivity(), PasswordDialog.Listener {
     }
 
     private fun readInputs(): User {
-        return return User(
+        return User(
             email = email_input.text.toString(),
             username = username_input.text.toString(),
             name = name_input.text.toStringOrNull(),

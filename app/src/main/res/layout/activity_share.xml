@@ -12,7 +12,7 @@
     >
         <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
                                                            android:layout_height="wrap_content">
-            <ImageView style="@style/toolbar_image"
+            <ImageView style="@style/icon"
                        android:src="@drawable/ic_back"
                        android:id="@+id/back_image"
                        app:layout_constraintBottom_toBottomOf="parent"

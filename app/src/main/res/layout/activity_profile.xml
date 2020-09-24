@@ -23,7 +23,7 @@
                       android:text="username"
             />
             
-            <ImageView style="@style/toolbar_image"
+            <ImageView style="@style/icon"
                        app:layout_constraintTop_toTopOf="parent"
                        app:layout_constraintEnd_toEndOf="parent"
                        android:src="@drawable/ic_more"

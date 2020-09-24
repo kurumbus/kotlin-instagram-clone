@@ -20,7 +20,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
                                                                android:layout_height="wrap_content">
 
-                <ImageView style="@style/toolbar_image"
+                <ImageView style="@style/icon"
                            android:id="@+id/close_image"
                            app:layout_constraintTop_toTopOf="parent"
                            app:layout_constraintStart_toStartOf="parent"
@@ -34,7 +34,7 @@
                           android:text="Edit Profile"
                 />
 
-                <ImageView style="@style/toolbar_image"
+                <ImageView style="@style/icon"
                            android:id="@+id/save_image"
                            app:layout_constraintTop_toTopOf="parent"
                            app:layout_constraintEnd_toEndOf="parent"
