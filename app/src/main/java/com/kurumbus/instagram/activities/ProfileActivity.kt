@@ -47,7 +47,7 @@ class ProfileActivity : BaseActivity(4) {
         mFirebaseHelper.mDatabase.child("images").child(mFirebaseHelper.mAuth.currentUser!!.uid).addValueEventListener(
             ValueEventListenerAdapter  {
                 val images =it.children.map { it.getValue(String::class.java)!! }
-                images_recycler.adapter = ImagesAdapter(images + images + images+ images)
+                images_recycler.adapter = ImagesAdapter(images)
             }
         )
     }
