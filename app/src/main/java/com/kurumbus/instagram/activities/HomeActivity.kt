@@ -1,12 +1,21 @@
 package com.kurumbus.instagram.activities
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.text.style.StyleSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -70,12 +79,42 @@ class FeedAdapter(private val posts: List<FeedPost>)
     }
 
     override fun onBindViewHolder(holder:ViewHolder, position: Int) {
-        holder.view.post_image.loadImage(posts[position].image)
+        val feedPost = posts[position]
+        with (holder) {
+            view.user_photo_image.loadImage(feedPost.photo)
+            view.username_text.text = feedPost.username
+            view.post_image.loadImage(feedPost.image)
+            if (feedPost.likesCount == 0) {
+                view.likes_text.visibility = View.GONE
+            } else {
+                view.likes_text.text = "${feedPost.likesCount} likes"
+
+            }
+            view.caption_text.setCaptionText(feedPost.username, feedPost.caption)
+        }
+    }
+
+    private fun TextView.setCaptionText(username: String, caption: String) {
+        val usernameSpannable = SpannableString(username)
+        usernameSpannable.setSpan(
+            StyleSpan( Typeface.BOLD), 0, usernameSpannable.length,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        usernameSpannable.setSpan(object: ClickableSpan() {
+            override fun onClick(widget: View) {
+                widget.context.showToast("Username is clicked")
+            }
+
+            override fun updateDrawState(ds: TextPaint) {}
+        },0, usernameSpannable.length,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        text = SpannableStringBuilder().append(usernameSpannable ).append(" ").append(caption)
+        movementMethod = LinkMovementMethod.getInstance()
     }
 
     override fun getItemCount() = posts.size
 
-    private fun ImageView.loadImage(image: String) {
+    private fun ImageView.loadImage(image: String?) {
         Glide.with(this).load(image).into(this)
     }
+
 }
