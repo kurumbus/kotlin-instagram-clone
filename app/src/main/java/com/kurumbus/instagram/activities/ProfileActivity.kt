@@ -43,6 +43,16 @@ class ProfileActivity : BaseActivity(4) {
             startActivity(intent)
         }
 
+        settings_image.setOnClickListener{
+            val intent = Intent(this, ProfileSettingsActivity::class.java)
+            startActivity(intent)
+        }
+
+        add_friends_image.setOnClickListener{
+            val intent = Intent(this, AddFriendsActivity::class.java)
+            startActivity(intent)
+        }
+
         images_recycler.layoutManager = GridLayoutManager(this, 3)
         mFirebaseHelper.mDatabase.child("images").child(mFirebaseHelper.mAuth.currentUser!!.uid).addValueEventListener(
             ValueEventListenerAdapter  {

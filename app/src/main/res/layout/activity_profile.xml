@@ -22,8 +22,16 @@
                       app:layout_constraintBottom_toBottomOf="parent"
                       android:text="username"
             />
+
+            <ImageView style="@style/icon"
+                       android:id="@+id/add_friends_image"
+                       app:layout_constraintTop_toTopOf="parent"
+                       app:layout_constraintEnd_toStartOf="@id/settings_image"
+                       android:src="@drawable/ic_add_friends"
+            />
             
             <ImageView style="@style/icon"
+                       android:id="@+id/settings_image"
                        app:layout_constraintTop_toTopOf="parent"
                        app:layout_constraintEnd_toEndOf="parent"
                        android:src="@drawable/ic_more"

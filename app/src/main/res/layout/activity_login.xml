@@ -25,20 +25,20 @@
                   android:layout_marginTop="120dp"
                   android:hint="Email"
                   android:inputType="textEmailAddress"
-                  style="@style/login_input"
+                  style="@style/big_input"
         />
 
 
         <EditText android:id="@+id/password_input"
                   app:layout_constraintTop_toBottomOf="@id/email_input"
-                  style="@style/login_input"
+                  style="@style/big_input"
                   android:hint="Password"
                   android:inputType="textPassword"
         />
 
         <Button android:id="@+id/login_button"
                 app:layout_constraintTop_toBottomOf="@id/password_input"
-                style="@style/login_button"
+                style="@style/big_button"
                 android:text="Log In"
         />
 

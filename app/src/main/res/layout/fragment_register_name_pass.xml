@@ -19,13 +19,13 @@
     />
 
     <EditText android:id="@+id/full_name_input"
-              style="@style/login_input"
+              style="@style/big_input"
               app:layout_constraintTop_toBottomOf="@+id/title"
               android:hint="Full Name"
     />
 
     <EditText android:id="@+id/password_input_register"
-              style="@style/login_input"
+              style="@style/big_input"
               app:layout_constraintTop_toBottomOf="@+id/full_name_input"
               android:hint="Password"
               android:inputType="textPassword"
@@ -33,7 +33,7 @@
 
     <Button android:id="@+id/register_button"
             android:text="Register"
-            style="@style/login_button"
+            style="@style/big_button"
             app:layout_constraintTop_toBottomOf="@id/password_input_register"
     />
 
