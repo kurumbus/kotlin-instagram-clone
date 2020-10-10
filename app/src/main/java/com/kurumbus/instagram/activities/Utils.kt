@@ -35,3 +35,7 @@ fun coordinateButtonAndInputs(btn: Button, vararg inputs: EditText) {
     inputs.forEach { it.addTextChangedListener(watcher) }
     btn.isEnabled = inputs.all { it.text.isNotEmpty() }
 }
+
+fun ImageView.loadImage(image: String?) {
+    Glide.with(this).load(image).into(this)
+}

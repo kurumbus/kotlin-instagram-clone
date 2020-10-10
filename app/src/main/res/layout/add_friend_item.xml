@@ -40,19 +40,22 @@
             android:id="@+id/name_text"
     />
 
-    <Button
+    <Button android:id="@+id/follow_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/username_text"
             android:text="follow"
             style="@style/small_button"
-            android:minHeight="0dp"
-            android:minWidth="0dp"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
+    />
+    <Button android:id="@+id/unfollow_button"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/username_text"
+            android:text="unfollow"
+            style="@style/secondary_small_button"
     />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

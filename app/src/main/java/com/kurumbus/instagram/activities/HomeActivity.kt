@@ -113,8 +113,5 @@ class FeedAdapter(private val posts: List<FeedPost>)
 
     override fun getItemCount() = posts.size
 
-    private fun ImageView.loadImage(image: String?) {
-        Glide.with(this).load(image).into(this)
-    }
 
 }

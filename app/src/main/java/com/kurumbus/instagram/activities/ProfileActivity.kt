@@ -76,9 +76,9 @@ class ImagesAdapter(private val images: List<String>): RecyclerView.Adapter<Imag
         holder.image.loadImage(images[position])
     }
 
-    private fun ImageView.loadImage(image: String) {
+/*    private fun ImageView.loadImage(image: String) {
         Glide.with(this).load(image).into(this)
-    }
+    }*/
 
     override fun getItemCount(): Int = images.size
 }
