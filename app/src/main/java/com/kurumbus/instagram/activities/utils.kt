@@ -4,21 +4,21 @@ import android.app.Activity
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.TaskCompletionSource
+import com.google.firebase.database.DataSnapshot
 import com.kurumbus.instagram.R
+import com.kurumbus.instagram.models.User
 
 fun Context.showToast(text: String = "", duration: Int = Toast.LENGTH_LONG) {
     Toast.makeText(this, text, duration).show()
-}
-
-fun ImageView.loadUserPhoto(photoUrl: String?) {
-    if (! (context as Activity).isDestroyed) {
-        Glide.with(this).load(photoUrl).fallback(R.drawable.person).into(this )
-    }
 }
 
 fun Editable.toStringOrNull(): String? {
@@ -36,6 +36,30 @@ fun coordinateButtonAndInputs(btn: Button, vararg inputs: EditText) {
     btn.isEnabled = inputs.all { it.text.isNotEmpty() }
 }
 
-fun ImageView.loadImage(image: String?) {
-    Glide.with(this).load(image).into(this)
+fun ImageView.loadUserPhoto(photoUrl: String?) =
+    ifNotDestroyed {
+        Glide.with(this).load(photoUrl).fallback(R.drawable.person).into(this )
+    }
+
+
+fun ImageView.loadImage(image: String?) =
+    ifNotDestroyed {
+        Glide.with(this).load(image).into(this)
+    }
+
+private fun View.ifNotDestroyed(block: () -> Unit) {
+    if (! (context as Activity).isDestroyed) {
+        block()
+    }
 }
+
+
+fun <T> task(block: (TaskCompletionSource<T>) -> Unit): Task<T> {
+    val taskSource = TaskCompletionSource<T>()
+    block(taskSource)
+    return taskSource.task
+}
+
+
+fun DataSnapshot.asUser(): User? =
+    getValue(User::class.java)?.copy(uid = key!!)

@@ -38,7 +38,7 @@ class ShareActivity : BaseActivity(2) {
 
         mFirebaseHelper.currentUserReference()
             .addValueEventListener(ValueEventListenerAdapter{
-                mUser = it.getValue(User::class.java)!!
+                mUser = it.asUser()!!
             })
 }
 
@@ -66,15 +66,21 @@ class ShareActivity : BaseActivity(2) {
                             val imageDownloadUrl = task.result.toString()
                             mFirebaseHelper.mDatabase.child("images").child(uid)
                                 .push().setValue(imageDownloadUrl).addOnCompleteListener{
+                                    Log.d(TAG, "created image")
                                     if (it.isSuccessful) {
                                         mFirebaseHelper.mDatabase.child("feed-posts").child(uid)
                                                        .push().setValue(mkFeedPost(uid, imageDownloadUrl))
                                                         .addOnCompleteListener{
+                                                            Log.d(TAG, "created feedpost")
                                                             if (it.isSuccessful) {
                                                                 startActivity(Intent(this, ProfileActivity::class.java))
                                                                 finish()
+                                                            } else {
+                                                                showToast(it.exception!!.message!!)
                                                             }
                                                         }
+                                    } else {
+                                        showToast(it.exception!!.message!!)
                                     }
                                 }
                         }
@@ -94,7 +100,7 @@ class ShareActivity : BaseActivity(2) {
             username = mUser.username,
             image = imageDownloadUrl,
             caption = caption_input.text.toString(),
-            photo = mUser.photo!!
+            photo = mUser.photo
         )
     }
 }
@@ -102,7 +108,7 @@ class ShareActivity : BaseActivity(2) {
 data class FeedPost(val uid: String = "", val username: String = "", val image: String = "",
                     val likesCount: Int = 0, val commentsCount: Int = 0, val caption: String = "",
                     val comments: List<Comment> = emptyList(),
-                    val timestamp: Any = ServerValue.TIMESTAMP,  val photo: String = "") {
+                    val timestamp: Any = ServerValue.TIMESTAMP,  val photo: String? = "") {
     fun timestampDate(): Date = Date(timestamp as Long)
 }
 

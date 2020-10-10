@@ -32,7 +32,7 @@ class ProfileActivity : BaseActivity(4) {
 
         mFirebaseHelper = FirebaseHelper(this)
         mFirebaseHelper.currentUserReference().addValueEventListener(ValueEventListenerAdapter {
-            mUser = it.getValue(User::class.java)!!
+            mUser = it.asUser()!!
             toolbar_title.text = mUser.username
             profile_image.loadUserPhoto(mUser.photo)
 
@@ -75,10 +75,6 @@ class ImagesAdapter(private val images: List<String>): RecyclerView.Adapter<Imag
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.image.loadImage(images[position])
     }
-
-/*    private fun ImageView.loadImage(image: String) {
-        Glide.with(this).load(image).into(this)
-    }*/
 
     override fun getItemCount(): Int = images.size
 }
