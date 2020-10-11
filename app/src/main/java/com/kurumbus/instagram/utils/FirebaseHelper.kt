@@ -17,9 +17,9 @@ class FirebaseHelper(private val activity: Activity) {
     val  mStorage: StorageReference = FirebaseStorage.getInstance().reference
 
     fun uploadUserPhoto(photoUri: Uri, onSuccess: (String) -> Unit ) {
-        mStorage.child("users/${mAuth.currentUser!!.uid}/photo").putFile(photoUri ).addOnCompleteListener{
+        mStorage.child("users/${currentUserUid()}/photo").putFile(photoUri ).addOnCompleteListener{
             if (it.isSuccessful) {
-                mStorage.child("users/${mAuth.currentUser!!.uid}/photo").downloadUrl.addOnCompleteListener{
+                mStorage.child("users/${currentUserUid()}/photo").downloadUrl.addOnCompleteListener{
                     val photoUrl = it.result.toString()
                     onSuccess(photoUrl)
                 }
@@ -30,7 +30,7 @@ class FirebaseHelper(private val activity: Activity) {
     }
 
     fun updateUserPhoto(url: String, onSuccess: () -> Unit ) {
-        mDatabase.child("users/${mAuth.currentUser!!.uid}/photo").setValue(url).addOnCompleteListener{
+        mDatabase.child("users/${currentUserUid()}/photo").setValue(url).addOnCompleteListener{
             if (it.isSuccessful) {
                 onSuccess()
             } else {
@@ -60,7 +60,7 @@ class FirebaseHelper(private val activity: Activity) {
     }
 
     fun updateUser(updates: Map<String, Any?>, onSuccess: () -> Unit) {
-        mDatabase.child("users").child(mAuth.currentUser!!.uid).updateChildren(updates)
+        mDatabase.child("users").child(currentUserUid()!!).updateChildren(updates)
             .addOnCompleteListener{
                 if (it.isSuccessful) {
                     onSuccess()
@@ -70,6 +70,7 @@ class FirebaseHelper(private val activity: Activity) {
             }
     }
 
-    fun currentUserReference(): DatabaseReference = mDatabase.child("users").child(mAuth.currentUser!!.uid)
+    fun currentUserReference(): DatabaseReference = mDatabase.child("users").child(currentUserUid()!!)
 
+    fun currentUserUid(): String? = mAuth.currentUser?.uid
 }

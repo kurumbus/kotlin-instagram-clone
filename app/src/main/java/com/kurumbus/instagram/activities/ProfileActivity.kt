@@ -54,7 +54,7 @@ class ProfileActivity : BaseActivity(4) {
         }
 
         images_recycler.layoutManager = GridLayoutManager(this, 3)
-        mFirebaseHelper.mDatabase.child("images").child(mFirebaseHelper.mAuth.currentUser!!.uid).addValueEventListener(
+        mFirebaseHelper.mDatabase.child("images").child(mFirebaseHelper.currentUserUid()!!).addValueEventListener(
             ValueEventListenerAdapter  {
                 val images =it.children.map { it.getValue(String::class.java)!! }
                 images_recycler.adapter = ImagesAdapter(images)

@@ -14,7 +14,9 @@ import com.bumptech.glide.Glide
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseReference
 import com.kurumbus.instagram.R
+import com.kurumbus.instagram.models.FeedPost
 import com.kurumbus.instagram.models.User
 
 fun Context.showToast(text: String = "", duration: Int = Toast.LENGTH_LONG) {
@@ -63,3 +65,9 @@ fun <T> task(block: (TaskCompletionSource<T>) -> Unit): Task<T> {
 
 fun DataSnapshot.asUser(): User? =
     getValue(User::class.java)?.copy(uid = key!!)
+
+fun DataSnapshot.asFeedPost(): FeedPost? =
+    getValue(FeedPost::class.java)?.copy(id = key)
+
+fun DatabaseReference.setValueTrueOrRemove(condition: Boolean) =
+    if (condition) setValue(true) else removeValue()

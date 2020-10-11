@@ -35,7 +35,7 @@ class AddFriendsActivity: AppCompatActivity(), FriendsAdapter.Listener {
 
         mFirebase = FirebaseHelper(this)
         mAdapter = FriendsAdapter( this)
-        val uid =mFirebase.mAuth.currentUser!!.uid
+        val uid =mFirebase.currentUserUid()
 
         back_image.setOnClickListener{
              finish()
@@ -70,8 +70,6 @@ class AddFriendsActivity: AppCompatActivity(), FriendsAdapter.Listener {
     }
 
     private fun setFollow(uid: String, follow: Boolean, onSuccess: () -> Unit ) {
-        fun DatabaseReference.setValueTrueOrRemove(condition: Boolean) =
-            if (condition) setValue(true) else removeValue()
         val usersNode = mFirebase.mDatabase.child("users")
         val followTask = usersNode.child(mUser.uid).child("follows").child(uid).setValueTrueOrRemove(follow)
         val followerTask = usersNode.child(uid).child("followers").child(mUser.uid).setValueTrueOrRemove(follow)

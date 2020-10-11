@@ -1,22 +1,17 @@
 package com.kurumbus.instagram.activities
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import com.bumptech.glide.Glide
-import com.google.firebase.database.ServerValue
-import com.google.firebase.database.ValueEventListener
 import com.kurumbus.instagram.R
+import com.kurumbus.instagram.models.FeedPost
 import com.kurumbus.instagram.models.User
 import com.kurumbus.instagram.utils.CameraHelper
 import com.kurumbus.instagram.utils.FirebaseHelper
 import com.kurumbus.instagram.utils.ValueEventListenerAdapter
 import kotlinx.android.synthetic.main.activity_share.*
-import java.sql.Date
-import java.sql.Timestamp
 
 class ShareActivity : BaseActivity(2) {
     private val TAG = "ShareActivity"
@@ -56,7 +51,7 @@ class ShareActivity : BaseActivity(2) {
     private fun share()  {
         val imageUri = mCameraHelper.imageUri
         if (imageUri !== null) {
-            val uid = mFirebaseHelper.mAuth.currentUser!!.uid
+            val uid = mFirebaseHelper.currentUserUid()!!
             mFirebaseHelper.mStorage.child("users")
                 .child(uid).child("images")
                 .child(imageUri.lastPathSegment!!).putFile(imageUri).addOnCompleteListener{
@@ -105,13 +100,3 @@ class ShareActivity : BaseActivity(2) {
     }
 }
 
-data class FeedPost(val uid: String = "", val username: String = "", val image: String = "",
-                    val likesCount: Int = 0, val commentsCount: Int = 0, val caption: String = "",
-                    val comments: List<Comment> = emptyList(),
-                    val timestamp: Any = ServerValue.TIMESTAMP,  val photo: String? = "") {
-    fun timestampDate(): Date = Date(timestamp as Long)
-}
-
-data class Comment(val uid: String, val username: String, val text: String) {
-
-}
